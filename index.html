@@ -1,0 +1,175 @@
+Kopiera hela texten nedan — markera från <!DOCTYPE html> hela vägen ner till sista </html> och klistra in i GitHub-filen:
+html<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="IdrottsMentorn" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <title>IdrottsMentorn – DM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0f; --surface: #111118; --surface2: #16161f;
+      --border: rgba(255,255,255,0.08); --text: #e2e8f0;
+      --muted: #475569; --muted2: #334155;
+      --blue: #60a5fa; --purple: #a78bfa; --pink: #f472b6;
+      --red: #f87171; --orange: #fb923c; --green: #34d399;
+    }
+    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; overscroll-behavior: none; }
+    body { display: flex; flex-direction: column; height: 100dvh; }
+    header { padding: 16px 20px 12px; border-bottom: 1px solid var(--border); background: rgba(10,10,15,0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; }
+    .logo-wrap { display: flex; flex-direction: column; gap: 1px; }
+    .logo-tag { font-size: 10px; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; }
+    .logo-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
+    #reset-btn { background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--muted); padding: 7px 14px; border-radius: 20px; font-size: 12px; font-family: inherit; cursor: pointer; display: none; }
+    #scroll-area { flex: 1; overflow-y: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 12px; -webkit-overflow-scrolling: touch; }
+    #empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 40px 20px; text-align: center; }
+    .empty-icon { font-size: 40px; margin-bottom: 8px; }
+    .empty-title { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; color: var(--text); }
+    .empty-sub { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 280px; }
+    .type-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 16px; width: 100%; max-width: 320px; }
+    .type-pill { padding: 8px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; text-align: center; }
+    .msg { display: flex; flex-direction: column; gap: 4px; animation: fadeUp 0.25s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .msg-label { font-size: 10px; color: var(--muted2); letter-spacing: 0.05em; text-transform: uppercase; padding: 0 4px; }
+    .msg-bubble { padding: 14px 16px; border-radius: 14px; font-size: 14px; line-height: 1.7; white-space: pre-wrap; }
+    .msg-bubble.incoming { background: rgba(96,165,250,0.07); border: 1px solid rgba(96,165,250,0.15); color: #94a3b8; }
+    .msg-bubble.reply { background: var(--surface2); border: 1px solid var(--border); color: var(--text); }
+    .type-badge { display: inline-flex; align-items: center; gap: 5px; border-radius: 20px; padding: 4px 10px; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+    .copy-btn { margin-top: 10px; border: none; border-radius: 10px; padding: 10px 18px; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; width: 100%; }
+    #loading { display: none; align-items: center; gap: 10px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; animation: pulse 1s infinite; }
+    .dot:nth-child(1) { background: var(--blue); animation-delay: 0s; }
+    .dot:nth-child(2) { background: var(--purple); animation-delay: 0.2s; }
+    .dot:nth-child(3) { background: var(--pink); animation-delay: 0.4s; }
+    @keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(0.7); } 50% { opacity: 1; transform: scale(1); } }
+    .loading-text { font-size: 13px; color: var(--muted); }
+    #input-bar { padding: 12px 16px; padding-bottom: max(12px, env(safe-area-inset-bottom)); background: rgba(10,10,15,0.98); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid var(--border); }
+    .input-wrap { display: flex; align-items: flex-end; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 10px 10px 10px 16px; transition: border-color 0.2s; }
+    .input-wrap:focus-within { border-color: rgba(96,165,250,0.4); }
+    #msg-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-size: 15px; font-family: inherit; line-height: 1.5; resize: none; max-height: 120px; min-height: 24px; }
+    #msg-input::placeholder { color: var(--muted2); }
+    #send-btn { width: 38px; height: 38px; border-radius: 12px; border: none; background: linear-gradient(135deg, #3b82f6, #7c3aed); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.2s, transform 0.1s; }
+    #send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    #send-btn:active:not(:disabled) { transform: scale(0.92); }
+    #scroll-bottom { height: 4px; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo-wrap">
+    <span class="logo-tag">@idrottsmentorn</span>
+    <span class="logo-title">DM-assistent</span>
+  </div>
+  <button id="reset-btn" onclick="resetChat()">Ny chatt</button>
+</header>
+<div id="scroll-area">
+  <div id="empty-state">
+    <div class="empty-icon">💬</div>
+    <div class="empty-title">Klistra in en DM</div>
+    <div class="empty-sub">Klistra in vad en ungdom har skrivit – få ett svar redo att skicka direkt.</div>
+    <div class="type-grid" id="type-grid"></div>
+  </div>
+  <div id="messages"></div>
+  <div id="loading">
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    <span class="loading-text">Skriver svar…</span>
+  </div>
+  <div id="scroll-bottom"></div>
+</div>
+<div id="input-bar">
+  <div class="input-wrap">
+    <textarea id="msg-input" rows="1" placeholder="Klistra in DM eller kommentar…"></textarea>
+    <button id="send-btn" disabled onclick="sendMessage()">↑</button>
+  </div>
+</div>
+<script>
+const TYPES = {
+  "Övertänkaren":{ color:"#60a5fa",emoji:"🧠" },
+  "Perfektionisten":{ color:"#a78bfa",emoji:"🎯" },
+  "Den rädda":{ color:"#f472b6",emoji:"🫤" },
+  "Den självkritiska":{ color:"#f87171",emoji:"💔" },
+  "Den pressade":{ color:"#fb923c",emoji:"👀" },
+  "Den tappade":{ color:"#34d399",emoji:"🌱" },
+};
+const SYSTEM = `Du driver kontot @idrottsmentorn och hjälper unga idrottare (12–18 år) med mental prestation i sport. Du svarar på kommentarer och DM varje dag på TikTok och Instagram. DITT SÄTT ATT VARA: Varm, trygg, mänsklig. Som en äldre lagkamrat – inte psykolog. Kort, enkelt, direkt. Aldrig mer än 4–6 meningar om det inte krävs. DIN SVARSMODELL: 1. Bekräfta 2. Förklara enkelt 3. Ge en liten handling 4. Ev. en fråga. TYPER: Övertänkaren, Perfektionisten, Den rädda, Den självkritiska, Den pressade, Den tappade. VIKTIGT: Börja svaret med "Typ: [typnamn]" på en egen rad, sedan svaret direkt.`;
+let history = [];
+const grid = document.getElementById('type-grid');
+Object.entries(TYPES).forEach(([name,{color,emoji}]) => {
+  const el = document.createElement('div');
+  el.className = 'type-pill';
+  el.style.cssText = `background:${color}15;border:1px solid ${color}30;color:${color}`;
+  el.textContent = `${emoji} ${name}`;
+  grid.appendChild(el);
+});
+const input = document.getElementById('msg-input');
+const sendBtn = document.getElementById('send-btn');
+input.addEventListener('input', () => {
+  input.style.height = 'auto';
+  input.style.height = Math.min(input.scrollHeight,120)+'px';
+  sendBtn.disabled = !input.value.trim();
+});
+input.addEventListener('keydown', e => {
+  if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); if(!sendBtn.disabled) sendMessage(); }
+});
+function scrollDown(){ document.getElementById('scroll-bottom').scrollIntoView({behavior:'smooth'}); }
+function detectType(text){ for(const n of Object.keys(TYPES)){ if(text.includes(n)) return n; } return null; }
+function escHtml(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); }
+function addUserBubble(text){
+  const w=document.createElement('div'); w.className='msg';
+  w.innerHTML=`<div class="msg-label">📥 Inkommande</div><div class="msg-bubble incoming">${escHtml(text)}</div>`;
+  document.getElementById('messages').appendChild(w);
+}
+function addReplyBubble(rawText){
+  const type=detectType(rawText);
+  const clean=rawText.replace(/^Typ:.*\n?/i,'').trim();
+  const cfg=type?TYPES[type]:null;
+  const w=document.createElement('div'); w.className='msg';
+  const badge=cfg?`<div class="type-badge" style="background:${cfg.color}18;border:1px solid ${cfg.color}44;color:${cfg.color}">${cfg.emoji} ${type}</div>`:'';
+  const color=cfg?cfg.color:'#60a5fa';
+  w.innerHTML=`<div class="msg-label">✍️ Ditt svar</div><div class="msg-bubble reply">${badge}<div>${escHtml(clean)}</div><button class="copy-btn" onclick="copyReply(this,${JSON.stringify(clean)})" style="background:${color}18;border:1px solid ${color}44;color:${color}">Kopiera svar</button></div>`;
+  document.getElementById('messages').appendChild(w);
+}
+function copyReply(btn,text){
+  navigator.clipboard.writeText(text).then(()=>{
+    const p=btn.textContent; btn.textContent='✓ Kopierat!';
+    btn.style.cssText='background:rgba(52,211,153,0.15);border:1px solid #34d39966;color:#34d399;margin-top:10px;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;width:100%';
+    setTimeout(()=>{ btn.textContent=p; btn.style.cssText=''; },2000);
+  });
+}
+async function sendMessage(){
+  const text=input.value.trim(); if(!text) return;
+  document.getElementById('empty-state').style.display='none';
+  document.getElementById('reset-btn').style.display='block';
+  addUserBubble(text);
+  history.push({role:'user',content:text});
+  input.value=''; input.style.height='auto'; sendBtn.disabled=true;
+  const loading=document.getElementById('loading'); loading.style.display='flex';
+  scrollDown();
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYSTEM,messages:history})});
+    const data=await res.json();
+    const reply=data.content?.map(b=>b.text||'').join('')||'Något gick fel.';
+    history.push({role:'assistant',content:reply});
+    loading.style.display='none';
+    addReplyBubble(reply);
+  }catch(e){
+    loading.style.display='none';
+    addReplyBubble('Något gick fel. Kontrollera din anslutning och försök igen.');
+  }
+  scrollDown();
+}
+function resetChat(){
+  history=[];
+  document.getElementById('messages').innerHTML='';
+  document.getElementById('empty-state').style.display='flex';
+  document.getElementById('reset-btn').style.display='none';
+}
+</script>
+</body>
+</html>
